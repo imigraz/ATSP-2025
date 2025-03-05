@@ -1,0 +1,188 @@
+---
+title: "Unit4 - Exercise 1"
+subtitle: "Example wide/long format"
+author: "YOUR NAME"
+date: "`r Sys.Date()`"
+output: 
+   html_document:
+     toc: TRUE
+     toc_float: TRUE
+---
+
+```{r setup, include = FALSE}
+# settings for output
+  knitr::opts_chunk$set(echo = FALSE)
+
+
+# Change setting of figure width and height
+  knitr::opts_chunk$set(fig.width = ggplot2::unit(10, "cm"), fig.height = ggplot2::unit(8, "cm"))
+
+# Change options such that progress bar is not shown in the output file <- NEW!!!
+  knitr::opts_knit$set(progress = FALSE, verbose = TRUE)
+
+# libraries used in this Rmd
+  library(ggplot2)
+  library(tidyverse)
+  library(flextable)
+  library(gtsummary)
+  library(knitr)
+  
+  library(cowplot)
+```
+
+
+# Example 1: use pivot_longer()
+Suppose we have the following data frame in R that shows the systolic blood pressure by various patients at different days
+
+```{r,  echo = TRUE, eval = TRUE}
+# Create data
+  dt_study <-
+    tibble(patient  = paste0("P", 1:5),
+           age = c(33, 46, 27, 59, 33),
+           sysbp1 = c(100, 85, 99, 76, 103),
+           sysbp2 = c(101, 86, 85, 76, 99),
+           sysbp3 = c(89, 88, 79, 83, 99))
+```
+
+We can use the pivot_longer() function to pivot this data frame into a long format.
+
+```{r,  echo = TRUE, eval = TRUE}
+# pivot the data frame into a long format (save it as dt_study_long)
+ # hint: look at arguments 'names_to' and 'values_to' 
+ #       such that in the end your column headers are
+ #        patient, age, measurement, systbp
+
+
+```
+
+```{r,  echo = TRUE, eval = TRUE}
+# Look at dt_study_long
+
+```
+
+```{r,  echo = TRUE, eval = TRUE}
+# plot systolic blood pressure and measuremnt with ggplot and geom_line()
+  # hint: you need to have in aes(..., group = patient)
+  #       try also to have colour related to parameter patient
+
+```
+
+# Example 2: use pivot_longer()
+Suppose we have the same dataset as in example 1 but with the additional information of dates
+
+```{r,  echo = TRUE, eval = TRUE}
+# Create data
+  dt_study2 <-
+    tibble(patient  = paste0("P", 1:5),
+           age = c(33, 46, 27, 59, 33),
+           sysbp1 = c(100, 85, 99, 76, 103),
+           sysbp2 = c(101, 86, 85, 76, 99),
+           sysbp3 = c(89, 88, 79, 83, 99),
+           date1 = as.Date(x = paste0(c(10, 13, 9, 12, 22), ".04.2022"), format = "%d.%m.%Y"),
+           date2 = as.Date(x = paste0(c(11, 15, 11, 13, 23), ".04.2022"), format = "%d.%m.%Y"),
+           date3 = as.Date(x = paste0(c(12, 16, 14, 14, 24), ".04.2022"), format = "%d.%m.%Y"))
+```
+
+
+We can use again the pivot_longer() function to pivot this data frame into a long format.
+
+```{r,  echo = TRUE, eval = TRUE}
+# pivot the data frame into a long format (save it as dt_study2_long)
+ # hint: you will need two separate pivot_longer calls, one for each new column you want to create
+ # hint; copy code for dt1 and adapt it to get dt2 with the dates instead of systbp
+ #  if dt1 and dt2 work use code which is currently in comments (use ?left_join to see what this function does)
+
+dt1 <-
+   dt_study2 %>% 
+    select(patient, age, sysbp1, sysbp2, sysbp3) %>% 
+    pivot_longer(cols = c(sysbp1, sysbp2, sysbp3),
+                 names_to = "measurement",
+                 values_to = "systbp") %>% 
+   mutate(measurement = str_remove(string = measurement, pattern = "sysbp"))
+
+
+ 
+   
+ # dt_study2_long <-
+ #   left_join(x = dt1,
+ #             y = dt2,
+ #             by = c("patient" = "patient",
+ #                    "age" = "age",
+ #                    "measurement" = "measurement"))
+
+```
+
+```{r,  echo = TRUE, eval = TRUE}
+# Look at dt_study2_long
+
+```
+
+```{r,  echo = TRUE, eval = TRUE}
+# plot systolic blood pressure and dates with ggplot and geom_line()
+  # hint: you need to have in aes(..., group = patient)
+  #       try also to have colour related to parameter patient
+  # hint: set the scale limits for y-axis such that you can see values between 75 and 125
+
+
+```
+
+
+# Example 3: use pivot_wider()
+Suppose we have the following data frame in R that contains information about various basketball players
+
+```{r,  echo = TRUE, eval = TRUE}
+# Create data
+  dt_game <-
+    tibble(player = rep(c('A', 'B'), each = 4),
+           bloodgroup = rep(c('A', 'AB'), each = 4),
+           year = rep(c(1, 1, 2, 2), times = 2),
+           stat = rep(c('points', 'assists'), times=4),
+           amount = c(14, 6, 18, 7, 22, 9, 38, 4))
+```
+
+We can use the pivot_wider() function to pivot this data frame into a wide format
+
+```{r,  echo = TRUE, eval = TRUE}
+# pivot the data frame into a wide format (save it as dt_game_wide)
+ # hint: look at arguments 'names_from' and 'values_from' 
+ #       such that in the end your column headers are
+ #        player, bloodgroup,  year, points, assists
+
+ 
+```
+
+```{r,  echo = TRUE, eval = TRUE}
+# Look at dt_game_wide
+
+```
+
+
+# Example 4: struma
+Load struma dataset 
+
+* create a long format version using the parameters: PatId, bloodgrp, weight, and weight_1year
+* plot weight with the two measurements and colour the lines according to the bloodgroup
+```{r,  echo = FALSE, eval = TRUE}
+# Load struma Rdata file
+  
+```
+
+
+```{r,  echo = TRUE, eval = TRUE}
+# pivot the data frame into a long format (save it as dt_struma_long)
+
+# hint: work first with select() before you use pivot_longer()
+ #      we will need only: PatId, bloodgrp, weight, weight_1year
+ 
+
+
+```
+
+
+```{r,  echo = TRUE, eval = TRUE}
+# plot sweight and measuremnt with ggplot and geom_line()
+  # hint: you need to have in aes(..., group = patient)
+  #       try also to have colour related to parameter bloodgroup
+
+
+```

@@ -1,5 +1,5 @@
 ---
-title: "Day2 - Exercise 1"
+title: "Unit3 - Exercise 1"
 subtitle: "Example struma - simple linear regression"
 author: "YOUR NAME"
 date: "`r Sys.Date()`"

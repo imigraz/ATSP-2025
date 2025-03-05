@@ -1,0 +1,83 @@
+---
+title: "Unit4 - Exercise 5"
+subtitle: "Example functions"
+author: "YOUR NAME"
+date: "`r Sys.Date()`"
+output: 
+   html_document:
+     toc: TRUE
+     toc_float: TRUE
+---
+
+```{r setup, include = FALSE}
+# settings for output
+  knitr::opts_chunk$set(echo = FALSE)
+
+
+# Change setting of figure width and height
+  knitr::opts_chunk$set(fig.width = ggplot2::unit(10, "cm"), fig.height = ggplot2::unit(8, "cm"))
+
+# Change options such that progress bar is not shown in the output file <- NEW!!!
+  knitr::opts_knit$set(progress = FALSE, verbose = TRUE)
+
+# libraries used in this Rmd
+  library(ggplot2)
+  library(tidyverse)
+  library(flextable)
+  library(gtsummary)
+  library(knitr)
+  
+  library(cowplot)
+```
+
+
+# Example 1: x + y
+* Write a function in which the two numbers are added and the resulting sum will be returned
+
+```{r,  echo = TRUE, eval = TRUE}
+# function for x+y
+  
+```
+
+* Test your function with x = 2 and y = 4
+
+```{r,  echo = TRUE, eval = TRUE}
+  
+```
+
+* add default values: x = 0 and y = 100
+
+```{r,  echo = TRUE, eval = TRUE}
+# function for x+y with default values 
+ 
+```
+
+* Test your updated function with x = 12 and give no value for y
+```{r,  echo = TRUE, eval = TRUE}
+  
+```
+
+* Test your updated function with y = 3 and give no value for x
+```{r,  echo = TRUE, eval = TRUE}
+  
+```
+
+# Example 2:  mean_median()
+* Write a function which returns mean and median of a vector with values using built-in functions
+```{r,  echo = TRUE, eval = TRUE}
+# function which returns mean and median
+  # hint: for return() you can use a vector as an object which should be returned
+
+ 
+```
+
+
+* Test your function with c(1, 3, 44, 2)
+
+```{r,  echo = TRUE, eval = TRUE}
+ 
+```
+
+
+# Link
+Look at https://bookdown.org/content/d1e53ac9-28ce-472f-bc2c-f499f18264a3/func.html to get further information.

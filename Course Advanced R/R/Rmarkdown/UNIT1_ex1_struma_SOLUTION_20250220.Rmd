@@ -184,7 +184,7 @@ pC <- p_hist + theme(legend.position = "none")
 pB <- p_qqplot + theme(legend.position = "none")
 
 
-plegend <-  cowplot::get_legend(p_boxplot) #cowplot::get_plot_component(plot, 'guide-box-top', return_all = TRUE) 
+plegend <-  cowplot::get_legend(p_boxplot +theme(legend.position = "right")) #cowplot::get_plot_component(plot, 'guide-box-top', return_all = TRUE) 
 
 cowplot::plot_grid(pA, pB, pC,plegend, nrow = 2, ncol = 2, labels = c("A", "B", "C", NA))
 
