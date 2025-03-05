@@ -1,0 +1,44 @@
+---
+title: "Unit2 - Exercise 0"
+subtitle: "Example A"
+author: "YOUR NAME"
+date: "`r Sys.Date()`"
+output: 
+   html_document:
+     toc: TRUE
+     toc_float: TRUE
+---
+```{r setup, include = FALSE}
+# settings for output
+  knitr::opts_chunk$set(echo = FALSE)
+
+
+# Change setting of figure width and height
+  knitr::opts_chunk$set(fig.width = ggplot2::unit(10, "cm"), fig.height = ggplot2::unit(8, "cm"))
+
+# Change options such that progress bar is not shown in the output file <- NEW!!!
+  knitr::opts_knit$set(progress = FALSE, verbose = TRUE)
+
+# libraries used in this Rmd
+  library(ggplot2)
+  library(tidyverse)
+  library(flextable)
+  library(gtsummary)
+  library(knitr)
+  
+  library(cowplot)
+```
+
+**TO DO**
+
+* knit this Rmd file
+
+
+# Descriptive statistics
+
+```{r, results = 'asis'}
+ dt_analysis <- iris
+
+  var_int <- "Sepal.Length"
+  cat(knit_child("0_subRmds/subRmd_exampleA.Rmd"), sep = '\n')
+```

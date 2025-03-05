@@ -1,0 +1,12 @@
+## Parameter `r i`: `r var_int`
+
+```{r}
+l <- sum(!is.na(dt %>%  pull(var_int)))
+```
+
+* has class: `r class(dt %>%  pull(var_int))`
+* has `r l ` valid observations
+
+```{r}
+rm(l)
+```

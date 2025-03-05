@@ -1,0 +1,54 @@
+---
+title: "Day1 - Exercise 3"
+subtitle: "Example"
+author: "YOUR NAME"
+date: "`r Sys.Date()`"
+output: 
+   html_document:
+     toc: TRUE
+     toc_float: TRUE
+---
+```{r setup, include = FALSE}
+# settings for output
+  knitr::opts_chunk$set(echo = FALSE)
+
+
+# Change setting of figure width and height
+  knitr::opts_chunk$set(fig.width = ggplot2::unit(10, "cm"), fig.height = ggplot2::unit(8, "cm"))
+
+# Change options such that progress bar is not shown in the output file <- NEW!!!
+  knitr::opts_knit$set(progress = FALSE, verbose = TRUE)
+
+# libraries used in this Rmd
+  library(ggplot2)
+  library(tidyverse)
+  library(flextable)
+  library(gtsummary)
+  library(knitr)
+  
+  library(cowplot)
+```
+
+**TO DO**
+
+* knit this Rmd file
+
+
+# Descriptive statistics
+
+```{r, results = 'asis'}
+# put some abretrary missings in the dataset
+dt <- 
+  iris %>% 
+    mutate(Sepal.Length = ifelse(Petal.Length >5.5 ,
+                                 NA, 
+                                 Sepal.Length))
+
+parameters <- names(dt)
+
+ for(i in 1:length(parameters)){
+  var_int <- parameters[i]
+  cat(knit_child("0_subRmds/subRmd_exampleB.Rmd"), sep = '\n')
+ }
+
+```

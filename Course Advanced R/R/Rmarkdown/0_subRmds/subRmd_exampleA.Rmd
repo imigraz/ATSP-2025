@@ -1,0 +1,10 @@
+## `r var_int`
+
+```{r}
+  ggplot(data = dt_analysis,
+         aes(x = get(var_int))) +
+    geom_histogram(fill = "grey80", color = "black") +
+    theme_bw()
+  
+```
+
