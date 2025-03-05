@@ -1,0 +1,192 @@
+---
+title: "Unit 1 - Exercise 1 - SOLUTION"
+subtitle: "Repetition - Create report for data set struma"
+author: "YOUR NAME"
+date: "`r Sys.Date()`"
+output: 
+   html_document:
+     toc: TRUE
+     toc_float: TRUE
+---
+
+```{r setup, include = FALSE}
+# settings for output
+  knitr::opts_chunk$set(echo = FALSE)
+
+# Change setting of figure width and height
+  knitr::opts_chunk$set(fig.width = ggplot2::unit(10, "cm"), fig.height = ggplot2::unit(8, "cm"))
+
+
+# libraries used in this Rmd
+  library(ggplot2)
+  library(tidyverse)
+  library(flextable)
+  library(gtsummary)
+  
+  library(cowplot)
+```
+
+```{r,  echo = FALSE, eval = TRUE}
+# Load Rdata file
+  filename <- list.files(path = "../Rdata/", pattern = "struma_prepared")
+
+ load(file = paste0("../Rdata/", filename))
+
+# show general information about dataset
+
+ info$general %>% 
+   flextable::flextable() %>% 
+   flextable::font(., fontname = "Cambria (Textkörper)", part = "all") %>%
+      flextable::fontsize(., size = 10 , part = "all") %>%
+      flextable::padding(padding.top = 0,
+                         padding.bottom = 0, part = "body") %>% 
+  
+      flextable::hline(.,
+              border = officer::fp_border(color = "grey70", style = "dotted")) %>%
+      # flextable::align(., j = 1, part = "all") %>%
+      flextable::bg(., bg = "grey90", part = "header") %>% 
+      flextable::bold(., bold = TRUE, part = "header") %>% 
+      flextable::autofit()  
+
+```
+
+# Data set - struma
+
+A goitre, or goiter, is a swelling in the neck resulting from an enlarged thyroid gland. 
+[in German: goiter = Struma; goitre = Kropf].
+
+
+In patients with goiter, a clinical study was conducted to investigate whether medication in addition to standard therapy (MED; yes/no) has an effect on thyroid hormones FT3, FT4 and TSH. 
+
+## List of parameters
+The data set contains following parameters
+
+```{r, results = 'asis'}
+mylist <- names(dt_struma)
+cat(paste("-", mylist), sep = "\n")
+```
+
+## Information about parameters
+```{r}
+info$dictionary %>% 
+   flextable::flextable() %>% 
+   flextable::font(., fontname = "Cambria (Textkörper)", part = "all") %>%
+      flextable::fontsize(., size = 10 , part = "all") %>%
+      flextable::padding(padding.top = 0,
+                         padding.bottom = 0, part = "body") %>% 
+  
+      flextable::hline(.,
+              border = officer::fp_border(color = "grey70", style = "dotted")) %>%
+      # flextable::align(., j = 1, part = "all") %>%
+      flextable::bg(., bg = "grey90", part = "header") %>% 
+      flextable::bold(., bold = TRUE, part = "header") %>% 
+      flextable::autofit()  
+```
+
+# Descriptive statistics 
+## Overview table
+```{r}
+# table with descriptive statistics
+ dt_struma %>%
+  tbl_summary(include = -c(PatId),
+              by = MED,
+              statistic = list(where(is.numeric) ~  "{mean} ({sd})")) %>% 
+  bold_labels() %>% 
+  modify_spanning_header(all_stat_cols() ~ "**Medication**") 
+
+
+# alternative for selecting
+  # dt_struma %>%
+  #   select(-c(PatId)) %>% 
+  #   tbl_summary(by = MED)
+```
+
+## Parameters
+### gender
+
+```{r, warning = FALSE}
+# table 
+ dt_struma %>%
+  tbl_summary(include = gender,
+              by = MED) %>% 
+  bold_labels() %>% 
+  modify_spanning_header(all_stat_cols() ~ "**Medication**") 
+
+```
+
+
+```{r}
+# bar plot - previous exercise
+
+ggplot(data = dt_struma,
+       aes(x = gender, fill = MED)) +
+  geom_bar(position=position_dodge()) +
+   scale_fill_manual(values = c("#00AFBB", "#E7B800")) +
+    theme_bw() +
+    theme(legend.position = "bottom")
+
+```
+
+
+
+### age
+```{r, warning = FALSE}
+# table 
+ dt_struma %>%
+  tbl_summary(include = age,
+              by = MED) %>% 
+  bold_labels() %>% 
+   modify_spanning_header(all_stat_cols() ~ "**Medication**")  
+
+```
+
+```{r}
+
+# boxplot ---
+p_boxplot <- 
+ggplot(data = dt_struma,
+       aes(x = age, fill = MED)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800")) +
+    theme_bw()+
+    theme(legend.position = "bottom")
+
+
+# histogramm ---
+p_hist <- 
+ggplot(data = dt_struma,
+       aes(x = age, fill = MED)) +
+  geom_histogram(color = "black") +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800")) +
+   theme_bw()+
+   theme(legend.position = "bottom") +
+
+  facet_grid(MED~.)
+
+# qq plot ---
+p_qqplot <-
+ggplot(data = dt_struma,
+       aes(sample = age, color = MED)) +
+  geom_qq() +
+  geom_qq_line() +
+
+    xlab("Theoretical") +
+    ylab("Sample") +
+    scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  theme_bw() +
+
+  facet_grid(MED~.)
+
+# one big plot with panels
+
+pA <- p_boxplot + theme(legend.position = "none")
+pC <- p_hist + theme(legend.position = "none")
+pB <- p_qqplot + theme(legend.position = "none")
+
+
+plegend <-  cowplot::get_legend(p_boxplot) #cowplot::get_plot_component(plot, 'guide-box-top', return_all = TRUE) 
+
+cowplot::plot_grid(pA, pB, pC,plegend, nrow = 2, ncol = 2, labels = c("A", "B", "C", NA))
+
+```
+
