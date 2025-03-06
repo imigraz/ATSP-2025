@@ -1,5 +1,5 @@
 ---
-title: "Unit4 - Exercise 5"
+title: "Unit4 - Exercise 4"
 subtitle: "Example functions"
 author: "YOUR NAME"
 date: "`r Sys.Date()`"
