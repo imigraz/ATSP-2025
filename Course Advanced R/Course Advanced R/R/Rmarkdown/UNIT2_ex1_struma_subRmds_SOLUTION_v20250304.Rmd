@@ -104,7 +104,6 @@ group_int <- "MED"
 group_int_lab <- "Medication"
 group_int_colors <- c("#00AFBB", "#E7B800")
 
-# these vectors will be used later
 vec_var_int_categorical <- c("gender", "bloodgrp", "smoking")
 vec_var_int_categorical_lab <- c("Gender", "Blood group", "Smoking level")
   
@@ -131,26 +130,91 @@ vec_var_int_continuous_lab <- c('systolic blood pressure [mmHg]', 'weight [kg]',
 
 ## Categorical parameters - no loop
 
+```{r, results = 'asis'}
+# for categorical parameters
 
+var_int <- "gender"
+var_int_lab <- "Gender"
+
+
+cat(knit_child("0_subRmds/subRmd_categorical_withgroup_SOLUTION_v20250304.Rmd"), sep = '\n')
+
+
+```
 
 
 ## Continuous parameters - no loop
 
+```{r, results = 'asis'}
+# for continuous parameters
+
+var_int <- 'systbp'
+var_int_lab <- 'systolic blood pressure [mmHg]'
+
+
+cat(knit_child("0_subRmds/subRmd_continuous_withgroup_SOLUTION_v20250304.Rmd"), sep = '\n')
+
+
+```
 
 
 ## Categorical parameters - with loop
 
+```{r, results = 'asis'}
+# for loop for categorical parameters
+
+for (j in 1:length(vec_var_int_categorical)) {
+# for (j in 2:2) {
+
+   var_int <- vec_var_int_categorical[j]
+   var_int_lab<- vec_var_int_categorical_lab[j]
+
+   cat(knit_child("0_subRmds/subRmd_categorical_withgroup_SOLUTION_v20250304.Rmd"), sep = '\n')
 
 
+  rm(var_int, var_int_lab)
+ }
+
+``` 
 
 ## Continuous parameters - with loop
 
+```{r, results = 'asis'}
+# for loop for continuous parameters
 
+for (j in 1:length(vec_var_int_continuous)) {
+# for (j in 1:3) {
+
+   var_int <- vec_var_int_continuous[j]
+   var_int_lab<- vec_var_int_continuous_lab[j]
+
+   cat(knit_child("0_subRmds/subRmd_continuous_withgroup_SOLUTION_v20250304.Rmd"), sep = '\n')
+
+
+  rm(var_int, var_int_lab)
+ }
+
+```
 
 
 
 ## Continuous parameters - with tabs {.tabset}
 
+```{r, results = 'asis'}
+# for loop for continuous parameters
 
+#for (j in 1:length(vec_var_int_continuous)) {
+ for (j in 1:3) {
+
+   var_int <- vec_var_int_continuous[j]
+   var_int_lab<- vec_var_int_continuous_lab[j]
+
+   cat(knit_child("0_subRmds/subRmd_continuous_withgroup_SOLUTION_v20250304.Rmd"), sep = '\n')
+
+
+  rm(var_int, var_int_lab)
+ }
+
+```
 
 

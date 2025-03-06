@@ -1,0 +1,348 @@
+---
+title: "Unit3 - Exercise 1"
+subtitle: "Example struma - simple linear regression"
+author: "YOUR NAME"
+date: "`r Sys.Date()`"
+output: 
+   html_document:
+     toc: TRUE
+     toc_float: TRUE
+---
+
+```{r setup, include = FALSE}
+# settings for output
+  knitr::opts_chunk$set(echo = FALSE)
+
+
+# Change setting of figure width and height
+  knitr::opts_chunk$set(fig.width = ggplot2::unit(10, "cm"), fig.height = ggplot2::unit(8, "cm"))
+
+# Change options such that progress bar is not shown in the output file <- NEW!!!
+  knitr::opts_knit$set(progress = FALSE, verbose = TRUE)
+
+# libraries used in this Rmd
+  library(ggplot2)
+  library(tidyverse)
+  library(flextable)
+  library(gtsummary)
+  library(knitr)
+ 
+  
+  library(cowplot)
+```
+
+```{r,  echo = FALSE, eval = TRUE}
+# Load Rdata file
+  filename <- list.files(path = "../Rdata/", pattern = "struma_prepared")
+
+ load(file = paste0("../Rdata/", filename))
+
+# show general information about dataset
+
+ info$general %>% 
+   flextable::flextable() %>% 
+   flextable::font(., fontname = "Cambria (Textkörper)", part = "all") %>%
+      flextable::fontsize(., size = 10 , part = "all") %>%
+      flextable::padding(padding.top = 0,
+                         padding.bottom = 0, part = "body") %>% 
+  
+      flextable::hline(.,
+              border = officer::fp_border(color = "grey70", style = "dotted")) %>%
+      # flextable::align(., j = 1, part = "all") %>%
+      flextable::bg(., bg = "grey90", part = "header") %>% 
+      flextable::bold(., bold = TRUE, part = "header") %>% 
+      flextable::autofit()  
+
+```
+
+
+**TO DO**
+
+* Investigate the following question
+   - What is the relationship between weight ('weight') and systolic blood pressure ('systbp'), respectively can weight explain systolic blood pressure?
+      + There is an update regarding one patient: PatId 100 has weight of 70kg not 55kg
+* Check the different assumptions
+   - hints will be given within the chunks
+* Look at R package 'moderndive'
+
+
+# Linear regression analysis
+```{r, echo = TRUE}
+# Adapt entry of patient PatId 100
+  dt_analysis <-
+    dt_struma %>% 
+      mutate(weight = ifelse(PatId == "100", 70, weight))
+```
+
+## Scatterplot
+```{r, echo = TRUE}
+# scatterplot with ggplot and geom_point
+
+  # xlab with "Weight [kg]"
+  # ylab with "Syst BP [mmHg]"
+
+ggplot(data = dt_analysis,
+       aes(x = weight, y = systbp)) +
+  geom_point() +
+  
+  xlab("Weight [kg]") +
+  ylab("Syst BP [mmHg]") +
+  
+  theme_bw()
+```
+
+
+## Model
+```{r, echo = TRUE}
+# simple linear regression model using function lm()
+ # save model result on 'res_model'
+  res_model <- lm(formula = systbp ~ weight,
+                  data = dt_analysis )
+```
+
+### Results - console output
+```{r, echo = TRUE}
+# print console output by printing res_model 
+ res_model
+ 
+```
+
+```{r, echo = TRUE}
+# print console output by using summary(res_model)
+  summary(res_model)
+ 
+```
+
+## Model assumptions
+* **Independence** - through study design
+* **Linearity** - scatter plot above
+
+### Residuals
+```{r, echo = TRUE}
+# Create dataset 'dt_fit_pred' with: observed weight, systbp, fitted values and standardized fitted values, residuals and standardized residuals
+ # hint: look what happens if you type in console res_model$
+ # hint: for standardized residuals use function rstandard()
+ # hint: for standardized fitted values; fit_value_stand = (fit_value - mean(fit_value))/sd(fit_value)
+
+dt_fit_pred <-
+   res_model$model %>%  
+   as_tibble() %>% 
+   mutate(fit_value = res_model$fitted.values,
+          fit_value_stand = (fit_value - mean(fit_value))/sd(fit_value),
+          residuals = res_model$residuals,
+          residuals_stand = rstandard(res_model))
+ 
+```
+
+#### Check normality assumption for residuals
+```{r, echo = TRUE}
+# Plot a 2x1 plot to check normality assumption for residuals (use plot_grid() from package cowplot))
+  # panel A: histogram
+  # panel B: qqplot
+
+p_res_stand<-
+  ggplot(data = dt_fit_pred,
+         aes(x = residuals_stand)) +
+    geom_histogram(fill = "grey80", colour = "black") +
+    xlab("Standardized Residual") +
+    theme_bw()
+
+
+p_res_qqplot <-
+  ggplot(data = dt_fit_pred,
+         aes(sample = residuals_stand)) +
+    geom_qq() +
+    geom_qq_line() +
+  
+      xlab("Theoretical") +
+      ylab("Standardized Residual") +
+    theme_bw()
+
+cowplot::plot_grid(p_res_stand, p_res_qqplot, nrow = 2)
+
+```
+
+#### Check homoscedasticity assumption
+```{r, echo = TRUE}
+
+        
+  ggplot(data = dt_fit_pred,
+         aes(x = fit_value_stand, y = residuals_stand)) +
+        
+          geom_point(fill = "grey80", colour = "black") +
+          ylab("Standardized residuals") +
+          xlab("Standardized fitted values") +
+          theme_bw() +
+        theme(axis.title = element_text(size = 15),
+              axis.text = element_text(size = 13),
+              legend.position = "none")
+```
+
+## Model plot
+```{r, echo = TRUE}
+# scatterplot with regression line
+ # hint: use for line: geom_line(data = dt_fit_pred, ...)
+
+ggplot(data = dt_analysis,
+       aes(x = weight, y = systbp)) +
+  geom_point() +
+  
+  geom_line(data = dt_fit_pred ,
+              aes(x = weight,
+                  y = fit_value )) +
+  
+  xlab("Weight [kg]") +
+  ylab("Syst BP [mmHg]") +
+  
+  theme_bw()
+
+```
+
+## Model plot with uncertainty
+```{r, echo = TRUE}
+# scatterplot with regression line + uncertainty
+ # hint: create a 'dt_pred' with predictions using function predict() 
+ #       for argument 'newdata' use tibble(weight = seq(from, to, by))
+
+ # hint: for plot geom_ribbon() and geom_line() use 'data = dt_pred' and for geom_point() 'data = dt_analysis' 
+  
+
+weight_new <- seq(from = min(dt_analysis$weight),
+                  to = max(dt_analysis$weight),
+                  by = 0.5)
+
+dt_pred <-
+  predict(object = res_model,
+          newdata = tibble(weight = weight_new),
+          interval = "confidence",
+          level = 0.95) %>%
+  as_tibble() %>%
+  bind_cols(weight = weight_new, .)
+
+
+ggplot() +
+  geom_ribbon(data = dt_pred,
+              aes(x = weight_new,
+                  y = fit,
+                  ymin = lwr,
+                  ymax = upr),
+              fill = "lightgrey") +
+  geom_line(data = dt_pred,
+              aes(x = weight_new,
+                  y = fit)) +
+
+  geom_point(data = dt_analysis,
+             aes(x = weight, y = systbp),
+             alpha = 0.8, colour = "darkred") +
+
+  xlab("Weight [kg]") +
+  ylab("Syst BP [mmHg]") +
+
+  theme_bw()
+
+
+
+```
+
+
+
+
+## Useful package 'moderndive'
+Details on https://moderndive.github.io/moderndive/
+
+
+```{r, echo = TRUE}
+# 1) Install package: install.packages("moderndive") <- only once or via munue Tools/Install Packages
+# 2) load library: library(moderndive)
+
+library(moderndive)
+```
+
+### Regression table with confidence intervals
+```{r, echo = TRUE}
+# hint: use flextable (see code in second junk)
+#       optional: to change digits for column 'XXX' us: flextable::colformat_double(., j = "XXX", digits = 3)
+
+get_regression_table(res_model) %>% 
+   flextable::flextable() %>% 
+  
+   flextable::colformat_double(., j = "p_value", digits = 3)  %>% 
+  
+   flextable::font(., fontname = "Cambria (Textkörper)", part = "all") %>%
+      flextable::fontsize(., size = 10 , part = "all") %>%
+      flextable::padding(padding.top = 0,
+                         padding.bottom = 0, part = "body") %>% 
+  
+      flextable::hline(.,
+              border = officer::fp_border(color = "grey70", style = "dotted")) %>%
+      flextable::bg(., bg = "grey90", part = "header") %>% 
+      flextable::bold(., bold = TRUE, part = "header") %>% 
+      flextable::autofit() 
+```
+
+### Fitted/predicted values and residuals
+Get information on each point/observation in your regression, including fitted/predicted values and residuals, in a single data frame
+```{r, echo = TRUE}
+# save it to 'dt_fit_pred_new'
+# hint: use flextable to print table
+
+dt_fit_pred_new <- get_regression_points(res_model)
+
+dt_fit_pred_new %>% 
+  head() %>% 
+  flextable::flextable() %>% 
+  
+  # flextable::colformat_double(., j = "p_value", digits = 3)  %>% 
+  
+   flextable::font(., fontname = "Cambria (Textkörper)", part = "all") %>%
+      flextable::fontsize(., size = 10 , part = "all") %>%
+      flextable::padding(padding.top = 0,
+                         padding.bottom = 0, part = "body") %>% 
+  
+      flextable::hline(.,
+              border = officer::fp_border(color = "grey70", style = "dotted")) %>%
+      flextable::bg(., bg = "grey90", part = "header") %>% 
+      flextable::bold(., bold = TRUE, part = "header") %>% 
+      flextable::autofit() 
+
+```
+
+
+### Summaries of regression fit 
+```{r, echo = TRUE}
+# hint: use flextable to print table 
+
+get_regression_summaries(res_model) %>% 
+  flextable::flextable() %>% 
+  
+   flextable::colformat_double(., j = "p_value", digits = 3)  %>% 
+  
+   flextable::font(., fontname = "Cambria (Textkörper)", part = "all") %>%
+      flextable::fontsize(., size = 10 , part = "all") %>%
+      flextable::padding(padding.top = 0,
+                         padding.bottom = 0, part = "body") %>% 
+  
+      flextable::hline(.,
+              border = officer::fp_border(color = "grey70", style = "dotted")) %>%
+      flextable::bg(., bg = "grey90", part = "header") %>% 
+      flextable::bold(., bold = TRUE, part = "header") %>% 
+      flextable::autofit() 
+
+```
+
+
+
+
+
+* $R^2$ - proportion of variance in the data that is explained by the model
+* $R^2_{adj}$ - $R^2$ with penalizing the addition of 'unnecessary' variables
+* MSE (mean squared error) - measures the average of the squares of the errors
+* RMSE (root mean square error) - measures the average difference between a statistical model's predicted values and the actual values
+* sigma - residual standard deviation
+* statistic - is the F-statistic value of the model; ratio of two variances (variance explained by the parameters in the model/unexplained variance)
+* p_value - probability of achieving an F-statistic that large under the null hypothesis of no effect
+   - $H_0:$ all coefficients in the model are equal to zero
+   - $H_A:$ not every coefficient is simultaneously equal to zero
+* df (degree of freedom)  - console output more informative
+* nobs - number of observations used in the model
+
