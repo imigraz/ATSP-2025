@@ -1,0 +1,28 @@
+### `r var_int_lab`
+
+```{r, warning = FALSE, eval = TRUE, echo = FALSE}
+# table 
+ dt_analysis %>%
+  tbl_summary(include = all_of(var_int),
+              by = group_int) %>% 
+  bold_labels() %>% 
+  modify_spanning_header(
+    update = starts_with("stat_") ~ paste0("**", group_int_lab, "**")) 
+```
+
+```{r, warning = FALSE, eval = TRUE, echo = FALSE}
+# bar plot
+ggplot(data = dt_analysis,
+       aes(x = get(var_int), fill = get(group_int))) +
+  geom_bar(position=position_dodge()) +
+    xlab(var_int_lab) +
+    scale_fill_manual(name = group_int_lab,
+                      values = group_int_colors) +
+  
+   
+    theme_bw() +
+    theme(legend.position = "bottom") 
+  
+```
+
+<br>

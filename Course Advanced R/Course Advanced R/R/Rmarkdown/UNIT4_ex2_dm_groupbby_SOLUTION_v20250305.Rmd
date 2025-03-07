@@ -49,7 +49,7 @@ Work with data set 'iris'.
 \tiny
 
 ```{r, echo = TRUE, eval = TRUE}
-
+iris %>%  group_by(Species)
 ```
 
 ## Data manipulation - *group_by* with *tally()*
@@ -57,7 +57,7 @@ Work with data set 'iris'.
 - What happens if you add 'tally()' after having the data set grouped by 'Species'?
 
 ```{r, echo = TRUE, eval = TRUE}
-
+iris %>%  group_by(Species) %>%  tally()
 ```
 
 ## Data manipulation - *group_by* with *mutate()*
@@ -66,7 +66,7 @@ Work with data set 'iris'.
 
 \tiny
 ```{r, echo = TRUE, eval = TRUE}
-
+iris %>%  group_by(Species) %>%  mutate(n = n(), mean_SL = mean(Sepal.Length))
 ```
  
 ## Data manipulation - *group_by* with *summarize()* 
@@ -81,7 +81,7 @@ Work with data set 'iris'.
 
 \tiny
 ```{r, echo = TRUE, eval = TRUE}
-
+iris %>%  group_by(Species) %>%  summarize(n = n(), mean_SL = mean(Sepal.Length), mean_SW = mean(Sepal.Width))
 ```
 
 
@@ -105,10 +105,10 @@ dt_example_long
 ```
 
 - Can you calculate the mean weight for each patient?
-- Can you calculate the difference to first weight measurement for each patient?
+- Can you calculate the difference to first weight measurement foreach patient?
 
 ```{r, echo = TRUE, eval = TRUE}
-
+dt_example_long %>%  group_by(id) %>%  mutate(n = n(), mean_weight = mean(weight), diff_w_v1 = weight - weight[1])
 ```
  
 

@@ -1,0 +1,85 @@
+### `r var_int_lab`
+
+```{r, warning = FALSE, eval = TRUE, echo = FALSE}
+# table
+ dt_analysis %>%
+  tbl_summary(include = all_of(c(var_int)),
+              by = group_int,
+              type = list(var_int ~ "continuous2"),
+              statistic = list(all_continuous2() ~ c("{median} ({p25} - {p75})", 
+                                                   "{min} - {max}",
+                                                   "{mean} ({sd})"))) %>% 
+  bold_labels() %>% 
+   modify_spanning_header(
+    update = starts_with("stat_") ~ paste0("**", group_int_lab, "**")) 
+```
+
+```{r, eval = TRUE, echo = FALSE}
+# boxplot ---
+p_boxplot <- 
+  ggplot(data = dt_analysis,
+         aes(x = get(var_int), fill = get(group_int))) +
+    geom_boxplot() +
+    
+    xlab(var_int_lab) +
+    scale_fill_manual(values = group_int_colors,
+                      name = group_int_lab) +
+    
+    
+    theme_bw()+
+    theme(legend.position = "bottom")
+
+  
+# histogramm ---
+p_hist <-
+  ggplot(data = dt_analysis,
+         aes(x = get(var_int), fill = get(group_int))) +
+    geom_histogram(color = "black") +
+  
+      xlab(var_int_lab) +
+      scale_fill_manual(values = group_int_colors,
+                        name = group_int_lab) +
+   
+     theme_bw()+
+     theme(legend.position = "bottom") +
+ 
+
+    facet_grid(get(group_int)~.)
+
+# qq plot ---
+p_qqplot <-
+  ggplot(data = dt_analysis,
+         aes(sample = get(var_int), color = get(group_int))) +
+    geom_qq() +
+    geom_qq_line() +
+  
+      xlab("Theoretical") +
+      ylab("Sample") +
+      scale_color_manual(values = group_int_colors,
+                         name = group_int_lab) +
+    theme_bw() +
+  
+    facet_grid(get(group_int)~.)
+
+# one big plot with panels
+
+# one big plot with panels
+
+pA <- p_boxplot + theme(legend.position = "none")
+pC <- p_hist + theme(legend.position = "none")
+pB <- p_qqplot + theme(legend.position = "none")
+
+
+plegend <-  cowplot::get_legend(p_hist + theme(legend.position = "right")) 
+
+cowplot::plot_grid(pA, pB, pC,plegend, nrow = 2, ncol = 2, labels = c("A", "B", "C", NA))
+
+```
+
+
+
+```{r}
+# remove objects
+rm(p_hist, p_qqplot, p_boxplot, pA, pB, pC, plegend)
+  
+```
