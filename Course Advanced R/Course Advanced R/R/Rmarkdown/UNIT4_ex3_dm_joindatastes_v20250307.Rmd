@@ -1,0 +1,152 @@
+---
+title: "Unit4 - Exercise 3"
+subtitle: "Example join data sets"
+author: "YOUR NAME"
+date: "`r Sys.Date()`"
+output: 
+   html_document:
+     toc: TRUE
+     toc_float: TRUE
+---
+
+```{r setup, include = FALSE}
+# settings for output
+  knitr::opts_chunk$set(echo = FALSE)
+
+
+# Change setting of figure width and height
+  knitr::opts_chunk$set(fig.width = ggplot2::unit(10, "cm"), fig.height = ggplot2::unit(8, "cm"))
+
+# Change options such that progress bar is not shown in the output file <- NEW!!!
+  knitr::opts_knit$set(progress = FALSE, verbose = TRUE)
+
+# libraries used in this Rmd
+  library(ggplot2)
+  library(tidyverse)
+  library(flextable)
+  library(gtsummary)
+  library(knitr)
+  
+  library(cowplot)
+```
+
+
+# Join data sets
+We work with different data sets about patients
+
+```{r}
+# create data
+## Data set 1
+dt_death <- tibble( PatientID  = c('P001','P002','P003'),
+                    Age           = c(23,12,5),
+                    Outcome    = c('Died','Died',NA)   )
+
+## Data set 2
+dt_bp <- tibble(PatientID   = c('P001','P002','P004'),
+                    SBP       = c(120,    80, 45),
+                    DBP       = c(80,    70, 30)
+ )
+
+## Data set 3
+dt_weight <- tibble(PatientID   = c('P001','P005','P006'),
+                        Weight   = c(80, 65, 78)
+)
+
+## Data set 4
+dt_hr <- tibble(PatID   = c('P001','P004','P007')
+                   , HeartRate   = c(65, 65, 72)
+)
+
+```
+
+
+## Data sets
+
+- Have a quick look at the data sets to get an idea about the content
+
+```{r}
+
+```
+
+
+## Join - *inner_join*
+
+* **inner_join**: only keeps observations from x that have a matching key in y
+   - test it with 'dt_death' and 'dt_bp'
+
+```{r, echo = TRUE, eval = TRUE}
+ 
+```
+
+- For how many patients you still have data entries?
+
+## Join - *full_join*
+
+* **full_join**: keeps all observations in x and y
+    - test it with 'dt_death' and 'dt_bp'
+
+```{r, echo = TRUE, eval = TRUE}
+ 
+ 
+```
+
+
+- Check the difference to 'inner_join()'
+
+## Join - *left_join*
+
+* **left_join**:   keeps all observations in x
+   - test it with 'dt_death' and 'dt_hr'
+
+```{r, echo = TRUE, eval = TRUE}
+ 
+
+```
+
+## Join - *right_join*
+
+* **right_join**:   keeps all observations in y
+      - test it with 'dt_death' and 'dt_hr'
+
+```{r, echo = TRUE, eval = TRUE}
+ 
+ 
+```
+
+
+- Do you see the difference to 'left_join'?
+
+
+## Join - with two keys
+```{r, echo = TRUE, eval = TRUE}
+ dt_pat <-
+   tibble(PatID = c(paste0('P00', c(1:10))),
+          sex   = c("m", "m", "m", "f", "f",
+                              "m", "f", "m", "m", "f"),
+          medication = c(rep("A", 5), rep("B", 5)),
+          center = rep(c("c1", "c2"), 5))
+
+dt_center <-
+  tibble(center = c("c1", "c1", "c2", "c2"),
+         medi = c("A", "B", "B", "A"),
+         checkup = c("today", "tomorrow", "never", "next week")
+  )
+
+ 
+```
+
+- Look at the data sets
+
+```{r}
+
+```
+
+
+- Add to the patient data set when the next check-up should take place
+
+
+```{r, echo = TRUE, eval = TRUE}
+ 
+ 
+ 
+```
