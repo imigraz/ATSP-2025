@@ -1,0 +1,114 @@
+---
+title: "Unit4 - Exercise 2"
+subtitle: "Example group_by"
+author: "YOUR NAME"
+date: "`r Sys.Date()`"
+output: 
+   html_document:
+     toc: TRUE
+     toc_float: TRUE
+---
+
+```{r setup, include = FALSE}
+# settings for output
+  knitr::opts_chunk$set(echo = FALSE)
+
+
+# Change setting of figure width and height
+  knitr::opts_chunk$set(fig.width = ggplot2::unit(10, "cm"), fig.height = ggplot2::unit(8, "cm"))
+
+# Change options such that progress bar is not shown in the output file <- NEW!!!
+  knitr::opts_knit$set(progress = FALSE, verbose = TRUE)
+
+# libraries used in this Rmd
+  library(ggplot2)
+  library(tidyverse)
+  library(flextable)
+  library(gtsummary)
+  library(knitr)
+  
+  library(cowplot)
+```
+
+```{r,  echo = FALSE, eval = TRUE}
+# Load Rdata file
+  filename <- list.files(path = "../Rdata/", pattern = "struma_prepared")
+
+ load(file = paste0("../Rdata/", filename))
+```
+
+# Data manipulation
+
+Work with data set 'iris'.
+
+## Data manipulation - *group_by*
+
+* **group_by**: allows you to group by a one or more variables
+   - test it with 'Species'
+
+\tiny
+
+```{r, echo = TRUE, eval = TRUE}
+
+```
+
+## Data manipulation - *group_by* with *tally()*
+
+- What happens if you add 'tally()' after having the data set grouped by 'Species'?
+
+```{r, echo = TRUE, eval = TRUE}
+
+```
+
+## Data manipulation - *group_by* with *mutate()*
+
+- Group by 'Species' and then calculate the mean of 'Sepal.Length'
+
+\tiny
+```{r, echo = TRUE, eval = TRUE}
+
+```
+ 
+## Data manipulation - *group_by* with *summarize()* 
+ 
+* **summarize**: creates a new data.frame containing calculated summary information about a grouped variable
+
+- group by 'Species'
+- use 'summarize' to get information about
+   + number of observations (hint: n())
+   + mean of 'Sepal.Length' for each group
+   + mean of 'Sepal.Width' for each group
+
+\tiny
+```{r, echo = TRUE, eval = TRUE}
+
+```
+
+
+## Data manipulation - *group_by* with *mutate()* and long format data
+\tiny
+```{r, echo = FALSE, eval = TRUE}
+dt_example1 <-
+  tibble(id = paste0("P", 1:4),
+         sex = c("m", NA,"f","x"),
+         weight_v1 = c(67, 63, 81, 88),
+         weight_v2 = c(66, 71, 69, 88),
+         weight_v3 = c(68, 65, 77, 90))
+
+dt_example_long <-
+  dt_example1 %>%
+           select(id, sex, contains("weight")) %>% 
+           pivot_longer(data = ., cols = -c(id, sex), names_to = "visit", names_prefix = "weight_", values_to = "weight") %>% 
+  filter(!(id == "P2" & visit == "v3"))
+
+dt_example_long 
+```
+
+- Can you calculate the mean weight for each patient?
+- Can you calculate the difference to first weight measurement foreach patient?
+
+```{r, echo = TRUE, eval = TRUE}
+
+```
+ 
+
