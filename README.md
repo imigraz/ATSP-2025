@@ -1,6 +1,13 @@
 # ATSP-2025
 Materials for 'Advanced Topics in Scientific Programming' (LV 0940.198), SS 2025, offered at the Medical University of Graz (<https://www.medunigraz.at>).
 
+## Contact
+
+Lecturers: 
+
+- [Marcus Bloice](https://online.medunigraz.at/mug_online/visitenkarte.show_vcard?pPersonenId=2122D9C7B06ADB48&pPersonenGruppe=3): Python content, days 1, 2, and 3.
+- [Sereina Herzog](https://online.medunigraz.at/mug_online/visitenkarte.show_vcard?pPersonenId=8BB9331376A5A83B&pPersonenGruppe=3): R content, days 3, 4, and 5.
+
 ## License
 
 [![CC BY-SA 4.0][cc-by-sa-image]][cc-by-sa]
